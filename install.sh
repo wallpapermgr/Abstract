@@ -45,11 +45,11 @@ scripts_check
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Defaults
 APPNAME="${APPNAME:-Abstract}"
-APPDIR="${APPDIR:-$SHARE/CasjaysDev/wallpapermgr}/$APPNAME"
-INSTDIR="${APPDIR}"
-REPO="${WALLPAPERMGRREPO:-https://github.com/wallpapermgr}/${APPNAME}"
-REPORAW="${REPORAW:-$REPO/raw}"
-APPVERSION="$(__appversion "$REPORAW/master/version.txt")"
+APPDIR="${WALLPAPERS:-$SHARE/wallpapers}/$APPNAME"
+INSTDIR="$SHARE/CasjaysDev/installed/$SCRIPTS_PREFIX/$APPNAME"
+REPO="${WALLPAPERMGRREPO}"
+REPORAW="$REPO/$APPNAME/raw"
+APPVERSION="$(__appversion ${REPO:-https://github.com/$SCRIPTS_PREFIX}/$APPNAME/raw/master/version.txt)"
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Call the wallpapermgr function
@@ -89,7 +89,7 @@ failexitcode
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # run post install scripts
 run_postinst() {
-  wallpapermgr_run_post
+  wallpapermgr_run_postinst
 }
 
 execute \
