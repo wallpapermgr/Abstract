@@ -37,40 +37,28 @@ fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Call the main function
 system_installdirs
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Make sure the scripts repo is installed
 scripts_check
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Defaults
 APPNAME="${APPNAME:-Abstract}"
-APPDIR="${APPDIR:-$SHARE/wallpapers/$APPNAME}"
-INSTDIR="${INSTDIR:-SHARE/CasjaysDev/installed/$SCRIPTS_PREFIX/$APPNAME}"
+APPDIR="${APPDIR:-$SHARE/wallpapers}/$APPNAME"
+INSTDIR="${INSTDIR:-SHARE/CasjaysDev/installed/$SCRIPTS_PREFIX}/$APPNAME"
 REPO="${WALLPAPERMGRREPO}"
 REPORAW="$REPO/$APPNAME/raw"
 APPVERSION="$(__appversion "${REPO:-https://github.com/$SCRIPTS_PREFIX}/$APPNAME/raw/master/version.txt")"
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Call the wallpapermgr function
 wallpapermgr_install
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Script options IE: --help
 show_optvars "$@"
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# end with a space
-APP=""
-
-# install packages - useful for package that have the same name on all oses
-install_packages "$APP"
-
+wallpaper_run_init
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Ensure directories exist
 ensure_dirs
 ensure_perms
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Main progam
 if __am_i_online; then
@@ -86,23 +74,14 @@ if __am_i_online; then
   # exit on fail
   failexitcode $? "Git has failed"
 fi
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # run post install scripts
-run_postinst() {
-  wallpapermgr_run_post
-}
-
-execute \
-  "run_postinst" \
-  "Running post install scripts"
-
+run_postinst() { wallpapermgr_run_post; }
+execute "run_postinst" "Running post install scripts"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # create version file
 wallpapermgr_install_version
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # exit
 run_exit
-
 # end
