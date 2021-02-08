@@ -89,7 +89,7 @@ failexitcode
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # run post install scripts
 run_postinst() {
-  wallpapermgr_run_postinst
+  wallpapermgr_run_post
 }
 
 execute \
