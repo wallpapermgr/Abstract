@@ -7,15 +7,15 @@ HOME="${USER_HOME:-${HOME}}"
 #set opts
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-##@Version       : 020720211622-git
+##@Version       : 020920210208-git
 # @Author        : Jason Hempstead
 # @Contact       : jason@casjaysdev.com
 # @License       : LICENSE.md
 # @ReadME        : README.md
 # @Copyright     : Copyright: (c) 2021 Jason Hempstead, CasjaysDev
-# @Created       : Sunday, Feb 07, 2021 16:22 EST
+# @Created       : Tuesday, Feb 09, 2021 02:08 EST
 # @File          : install.sh
-# @Description   : Wallpaper installer
+# @Description   : Installer for Abstract wallpaper pack
 # @TODO          :
 # @Other         :
 # @Resource      :
@@ -25,11 +25,15 @@ CASJAYSDEVDIR="${CASJAYSDEVDIR:-/usr/local/share/CasjaysDev/scripts}"
 SCRIPTSFUNCTDIR="${CASJAYSDEVDIR:-/usr/local/share/CasjaysDev/scripts}/functions"
 SCRIPTSFUNCTFILE="${SCRIPTSAPPFUNCTFILE:-app-installer.bash}"
 SCRIPTSFUNCTURL="${SCRIPTSAPPFUNCTURL:-https://github.com/dfmgr/installer/raw/master/functions}"
+connect_test() { ping -c1 1.1.1.1 &>/dev/null || curl --disable -LSs --connect-timeout 3 --retry 0 --max-time 1 1.1.1.1 2>/dev/null | grep -e "HTTP/[0123456789]" | grep -q "200" -n1 &>/dev/null; }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 if [ -f "$PWD/$SCRIPTSFUNCTFILE" ]; then
   . "$PWD/$SCRIPTSFUNCTFILE"
 elif [ -f "$SCRIPTSFUNCTDIR/$SCRIPTSFUNCTFILE" ]; then
   . "$SCRIPTSFUNCTDIR/$SCRIPTSFUNCTFILE"
+elif connect_test; then
+  curl -LSs "$SCRIPTSFUNCTURL/$SCRIPTSFUNCTFILE" -o "/tmp/$SCRIPTSFUNCTFILE" || exit 1
+  . "/tmp/$SCRIPTSFUNCTFILE"
 else
   echo "Can not load the functions file: $SCRIPTSFUNCTDIR/$SCRIPTSFUNCTFILE" 1>&2
   exit 1
@@ -45,7 +49,7 @@ scripts_check
 APPNAME="${APPNAME:-Abstract}"
 APPDIR="${APPDIR:-$SHARE/wallpapers/$APPNAME}"
 INSTDIR="${INSTDIR:-SHARE/CasjaysDev/installed/$SCRIPTS_PREFIX/$APPNAME}"
-REPO="${WALLPAPERMGRREPO}"
+REPO="${WALLPAPERMGRREPO:-https://github.com/wallpapermgr/$APPNAME}"
 REPORAW="$REPO/$APPNAME/raw"
 APPVERSION="$(__appversion "${REPO:-https://github.com/$SCRIPTS_PREFIX}/$APPNAME/raw/master/version.txt")"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -54,7 +58,6 @@ wallpapermgr_install
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Script options IE: --help
 show_optvars "$@"
-wallpaper_run_init
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Ensure directories exist
 ensure_dirs
@@ -63,20 +66,19 @@ ensure_perms
 # Main progam
 if __am_i_online; then
   if [ -d "$INSTDIR/.git" ]; then
-    execute \
-      "git_update $INSTDIR" \
-      "Updating $APPNAME wallpaper pack"
+    execute "git_update $INSTDIR" "Updating $APPNAME wallpaper pack"
   else
-    execute \
-      "git_clone -q $REPO/$APPNAME $INSTDIR" \
-      "Installing $APPNAME wallpaper pack"
+    execute "git_clone $REPO/$APPNAME $INSTDIR" "Installing $APPNAME wallpaper pack"
   fi
   # exit on fail
   failexitcode $? "Git has failed"
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # run post install scripts
-run_postinst() { wallpapermgr_run_post; }
+run_postinst() {
+  wallpapermgr_run_post
+}
+#
 execute "run_postinst" "Running post install scripts"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # create version file
