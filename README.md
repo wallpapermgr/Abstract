@@ -5,7 +5,7 @@ Abstract wallpapers
 Automatic install/update:
   
 ```shell
-bash -c "$(curl -LSs https://github.com/dfmgr/Abstract/raw/master/install.sh)"
+bash -c "$(curl -LSs https://github.com/dfmgr/Abstract/raw/main/install.sh)"
 ```
   
 Manual install:
